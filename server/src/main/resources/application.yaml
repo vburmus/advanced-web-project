@@ -1,3 +1,19 @@
 spring:
   application:
     name: fleet-management-server
+  datasource:
+    username: ${SQL_USERNAME}
+    url: ${SQL_URI}
+    password: ${SQL_PASSWORD}
+  data:
+    web:
+      pageable:
+        default-page-size: 10
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        show_sql: true
