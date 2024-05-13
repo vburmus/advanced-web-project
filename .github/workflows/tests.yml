@@ -16,7 +16,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
-          java-version: '11'
+          java-version: '17'
       - name: Navigate to server directory
         run: cd server
       - name: Cache Gradle dependencies
@@ -27,6 +27,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Build with Gradle
-        run: ./gradlew build --no-daemon
+        run: gradlew build --no-daemon
       - name: Run tests
-        run: ./gradlew test --no-daemon
+        run: gradlew test --no-daemon
