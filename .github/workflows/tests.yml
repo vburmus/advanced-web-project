@@ -1,4 +1,4 @@
-name: Run Tests
+name: Run Server Tests
 on:
   push:
     branches:
@@ -12,12 +12,13 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
           java-version: '11'
+      - name: Navigate to server directory
+        run: cd server
       - name: Cache Gradle dependencies
         uses: actions/cache@v2
         with:
