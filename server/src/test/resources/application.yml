@@ -1,0 +1,17 @@
+spring:
+  profiles:
+    active: default
+  datasource:
+    url: jdbc:h2:mem:fleetmanagement
+    username: dbuser
+    password: dbpass
+    driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+      path: /console
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true

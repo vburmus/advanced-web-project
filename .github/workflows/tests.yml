@@ -6,9 +6,13 @@ on:
   pull_request:
     branches:
       - main
+      - dev
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./server
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -17,16 +21,16 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '17'
-      - name: Navigate to server directory
-        run: cd server
-      - name: Cache Gradle dependencies
-        uses: actions/cache@v2
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5
+      - name: Test
+        run: ./gradlew test --no-daemon
+      - name: Generate JaCoCo Report
+        run: ./gradlew jacocoTestReport --no-daemon
+      - name: Check Generated Report
+        run: cat build/reports/jacoco/test/jacocoTestReport.csv
+      - name: Generate JaCoCo Badge
+        uses: cicirello/jacoco-badge-generator@v2
         with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - name: Build with Gradle
-        run: gradlew build --no-daemon
-      - name: Run tests
-        run: gradlew test --no-daemon
+          generate-branches-badge: true
+          jacoco-csv-file: server/build/reports/jacoco/test/jacocoTestReport.csv
