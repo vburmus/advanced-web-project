@@ -1,5 +1,6 @@
-package com.wust.advanced.web.user;
+package com.wust.advanced.web.user.model;
 
+import com.wust.advanced.web.auth.credentials.model.Credentials;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,28 +21,27 @@ public class FMUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, length = 50, unique = true)
-    private String email;
-    @Column(nullable = false)
-    private String password;
     @Column(length = 50)
     private String name;
     @Column(length = 50)
     private String surname;
+    @OneToOne
+    private Credentials credentials;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        FMUser user = (FMUser) o;
-        return new EqualsBuilder().append(id, user.id)
-                                  .append(email, user.email)
-                                  .append(password, user.password)
+        FMUser fmUser = (FMUser) o;
+        return new EqualsBuilder().append(id, fmUser.id)
+                                  .append(name, fmUser.name)
+                                  .append(surname, fmUser.surname)
+                                  .append(credentials, fmUser.credentials)
                                   .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(id).append(email).append(password).toHashCode();
+        return new HashCodeBuilder(17, 37).append(id).append(name).append(surname).append(credentials).toHashCode();
     }
 }

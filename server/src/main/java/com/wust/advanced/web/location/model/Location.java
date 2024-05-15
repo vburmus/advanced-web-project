@@ -1,9 +1,13 @@
-package com.wust.advanced.web.location;
+package com.wust.advanced.web.location.model;
 
+import com.wust.advanced.web.car.model.Car;
 import jakarta.persistence.*;
 import lombok.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -19,7 +23,10 @@ public class Location {
     private Double longitude;
     @Column(nullable = false)
     private Double latitude;
-
+    @CreatedDate
+    private LocalDateTime timestamp;
+    @ManyToOne
+    private Car car;
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

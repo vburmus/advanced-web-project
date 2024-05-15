@@ -1,7 +1,7 @@
-package com.wust.advanced.web.car;
+package com.wust.advanced.web.car.model;
 
-import com.wust.advanced.web.driver.Driver;
-import com.wust.advanced.web.location.Location;
+import com.wust.advanced.web.user.driver.model.Driver;
+import com.wust.advanced.web.location.model.Location;
 import jakarta.persistence.*;
 import lombok.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -27,7 +27,7 @@ public class Car {
     private String countryCode;
     @OneToOne
     private Driver driver;
-    @OneToMany
+    @OneToMany(mappedBy = "car")
     private List<Location> locations;
     @Override
     public boolean equals(Object o) {
