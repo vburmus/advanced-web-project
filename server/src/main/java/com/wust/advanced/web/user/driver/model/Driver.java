@@ -1,8 +1,10 @@
-package com.wust.advanced.web.driver;
+package com.wust.advanced.web.user.driver.model;
 
-import com.wust.advanced.web.user.FMUser;
+import com.wust.advanced.web.car.model.Car;
+import com.wust.advanced.web.user.model.FMUser;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,6 +28,8 @@ public class Driver extends FMUser {
     private String drivingLicenseCountryCode;
     @Column(nullable = false)
     private LocalDate dateOfBirth;
+    @OneToOne(mappedBy = "driver")
+    private Car car;
 
     @Override
     public boolean equals(Object o) {

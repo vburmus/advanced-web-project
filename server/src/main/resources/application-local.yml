@@ -3,3 +3,6 @@ spring:
     username: admin
     url: jdbc:postgresql://localhost:5432/fleet_management
     password: admin
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
