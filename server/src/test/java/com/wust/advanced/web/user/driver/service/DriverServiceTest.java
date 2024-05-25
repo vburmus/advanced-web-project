@@ -2,18 +2,22 @@ package com.wust.advanced.web.user.driver.service;
 
 import com.wust.advanced.web.user.driver.model.Driver;
 import com.wust.advanced.web.user.driver.repository.DriverRepository;
+import com.wust.advanced.web.user.model.FMUser;
+import com.wust.advanced.web.user.service.UserService;
 import com.wust.advanced.web.utils.EntityToDtoMapper;
 import com.wust.advanced.web.utils.dto.DriverDto;
+import com.wust.advanced.web.utils.exceptions.ItemExistsException;
 import com.wust.advanced.web.utils.exceptions.ItemNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,8 +25,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DriverServiceTest {
@@ -32,6 +35,8 @@ class DriverServiceTest {
 
     @Mock
     private EntityToDtoMapper entityToDtoMapper;
+    @Mock
+    private UserService userService;
 
     @InjectMocks
     private DriverService driverService;
@@ -46,8 +51,6 @@ class DriverServiceTest {
     void setUp() {
         driver = Driver.builder()
                        .id(1L)
-                       .name("John")
-                       .surname("Doe")
                        .drivingLicenseNumber("ABC123")
                        .drivingLicenseCountryCode("USA")
                        .dateOfBirth(LocalDate.of(1980, 1, 1))
@@ -55,11 +58,10 @@ class DriverServiceTest {
 
         driverDto = new DriverDto(
                 1L,
-                "John",
-                "Doe",
                 "ABC123",
                 "USA",
-                LocalDate.of(1980, 1, 1)
+                LocalDate.of(1980, 1, 1),
+                null
         );
     }
 
@@ -98,29 +100,70 @@ class DriverServiceTest {
     }
 
     @Test
-    void create() {
+    void createSuccessfulCreation() {
+        // given
+        DriverDto driverDto = new DriverDto(1L, "licenseNumber", "licenseCountry", LocalDate.now(), null);
+        Driver driver = new Driver();
         when(entityToDtoMapper.driverDtoToDriver(driverDto)).thenReturn(driver);
-        when(driverRepository.exists(any(Example.class))).thenReturn(false);
+        Authentication authentication = mock(Authentication.class);
+        DefaultOidcUser oidcUser = mock(DefaultOidcUser.class);
+        when(authentication.getPrincipal()).thenReturn(oidcUser);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        when(oidcUser.getEmail()).thenReturn("test@example.com");
+        FMUser user = new FMUser();
+        when(userService.getByEmail("test@example.com")).thenReturn(user);
+        when(driverRepository.exists(any())).thenReturn(false);
         when(driverRepository.save(driver)).thenReturn(driver);
         when(entityToDtoMapper.driverToDriverDto(driver)).thenReturn(driverDto);
 
+        // when
         DriverDto result = driverService.create(driverDto);
 
+        // then
         assertEquals(driverDto, result);
         verify(driverRepository).save(driver);
     }
 
     @Test
     void createDriverExists() {
+        // given
+        DriverDto driverDto = new DriverDto(1L, "licenseNumber", "licenseCountry", LocalDate.now(), null);
+        Driver driver = Driver.builder().drivingLicenseNumber("licenseNumber").drivingLicenseCountryCode("licenseCountry").dateOfBirth(LocalDate.now()).build();
         when(entityToDtoMapper.driverDtoToDriver(driverDto)).thenReturn(driver);
-        when(driverRepository.exists(any(Example.class))).thenReturn(true);
+        Authentication authentication = mock(Authentication.class);
+        DefaultOidcUser oidcUser = mock(DefaultOidcUser.class);
+        when(authentication.getPrincipal()).thenReturn(oidcUser);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        when(oidcUser.getEmail()).thenReturn("test@example.com");
+        FMUser user = new FMUser();
+        when(userService.getByEmail("test@example.com")).thenReturn(user);
+        when(driverRepository.exists(any())).thenReturn(true);
 
-        ItemNotFoundException exception = assertThrows(ItemNotFoundException.class, () -> {
+        // when
+        ItemExistsException exception = assertThrows(ItemExistsException.class, () -> {
             driverService.create(driverDto);
         });
+        //then
+        assertEquals("Driver with license licenseCountry:licenseNumber or such user already exists ",
+                exception.getMessage());
+        verify(driverRepository, never()).save(driver);
+    }
 
-        assertEquals(String.format(DriverService.DRIVER_ALREADY_EXISTS,
-                driver.getDrivingLicenseCountryCode(), driver.getDrivingLicenseNumber()), exception.getMessage());
+    @Test
+    void createNoAuthentication() {
+        // given
+        DriverDto driverDto = new DriverDto(1L, "licenseNumber", "licenseCountry", LocalDate.now(), null);
+        Driver driver = new Driver();
+        when(entityToDtoMapper.driverDtoToDriver(driverDto)).thenReturn(driver);
+        SecurityContextHolder.getContext().setAuthentication(null);
+
+        // when
+        AuthenticationCredentialsNotFoundException exception = assertThrows(AuthenticationCredentialsNotFoundException.class, () -> {
+            driverService.create(driverDto);
+        });
+        //then
+        assertEquals("Expected authentication principal is not present", exception.getMessage());
+        verify(driverRepository, never()).save(driver);
     }
 
     @Test
