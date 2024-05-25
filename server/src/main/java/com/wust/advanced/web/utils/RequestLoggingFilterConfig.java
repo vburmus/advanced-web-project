@@ -2,9 +2,11 @@ package com.wust.advanced.web.utils;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
 
 @Configuration
+@Profile("local")
 public class RequestLoggingFilterConfig {
     @Bean
     public CommonsRequestLoggingFilter logFilter() {

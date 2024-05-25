@@ -5,9 +5,8 @@ import java.time.LocalDate;
 
 public record DriverDto(
         Long id,
-        String name,
-        String surname,
         String drivingLicenseNumber,
         String drivingLicenseCountryCode,
-        LocalDate dateOfBirth) {
+        LocalDate dateOfBirth,
+        FMUserDto user) {
 }

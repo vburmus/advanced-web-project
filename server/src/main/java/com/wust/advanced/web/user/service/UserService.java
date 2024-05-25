@@ -4,6 +4,7 @@ import com.wust.advanced.web.auth.credentials.model.Credentials;
 import com.wust.advanced.web.auth.credentials.service.CredentialsService;
 import com.wust.advanced.web.user.model.FMUser;
 import com.wust.advanced.web.user.repository.UserRepository;
+import com.wust.advanced.web.utils.exceptions.ItemNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,5 +32,9 @@ public class UserService {
                                .build();
 
         return userRepository.save(newUser);
+    }
+    public FMUser getByEmail(String email) {
+        return userRepository.findByCredentials_Email(email).orElseThrow(() -> new ItemNotFoundException("User with email " + email + " " +
+                "not found"));
     }
 }

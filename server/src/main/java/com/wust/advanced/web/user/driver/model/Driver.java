@@ -2,9 +2,7 @@ package com.wust.advanced.web.user.driver.model;
 
 import com.wust.advanced.web.car.model.Car;
 import com.wust.advanced.web.user.model.FMUser;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +19,10 @@ import java.time.LocalDate;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Driver extends FMUser {
+public class Driver {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @Column(nullable = false, length = 20)
     private String drivingLicenseNumber;
     @Column(nullable = false, length = 3)
@@ -30,6 +31,8 @@ public class Driver extends FMUser {
     private LocalDate dateOfBirth;
     @OneToOne(mappedBy = "driver")
     private Car car;
+    @OneToOne
+    private FMUser user;
 
     @Override
     public boolean equals(Object o) {
