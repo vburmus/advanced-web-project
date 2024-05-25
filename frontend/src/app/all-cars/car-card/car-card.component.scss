@@ -1,0 +1,18 @@
+.card {
+    border: solid #078f8f;
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    background-color: #cfeea6;
+    padding: 20px 60px;
+    cursor: pointer;
+    border-radius: 15px;
+}
+
+.card h2 {
+    text-align: center;
+}
+
+.card p {
+    font-size: 1.2em;
+}
