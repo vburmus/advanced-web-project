@@ -22,4 +22,8 @@ public class LocationService {
     public Page<LocationDto> readAllByCarId(Long carId, Pageable pageable) {
         return locationRepository.findAllByCar_Id(carId, pageable).map(entityToDtoMapper::locationToLocationDTO);
     }
+
+    public void deleteAllByCarId(Long carId) {
+        locationRepository.deleteAllByCar_Id(carId);
+    }
 }
