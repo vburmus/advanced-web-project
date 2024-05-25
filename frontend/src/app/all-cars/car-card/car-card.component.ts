@@ -5,7 +5,14 @@ import {Car} from "../../../utils/types";
   selector: 'vt-car-card',
   standalone: true,
   imports: [],
-  templateUrl: './car-card.component.html',
+  template: `
+    <div class="card">
+      <h2>Car {{ car.id }}</h2>
+      <p>VIN: {{ car.vin }}</p>
+      <p>Plate Number: {{ car.plateNumber }}</p>
+      <p>Country Code: {{ car.countryCode }}</p>
+    </div>
+  `,
   styleUrl: './car-card.component.scss'
 })
 export class CarCardComponent {
