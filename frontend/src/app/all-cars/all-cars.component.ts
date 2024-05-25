@@ -14,7 +14,12 @@ import {VtMapAllCarsComponent} from "./vt-map-all-cars/vt-map-all-cars.component
     CarCardComponent,
     VtMapAllCarsComponent
   ],
-  templateUrl: './all-cars.component.html',
+  template: `
+    <vt-map-all-cars [cars]="cars"/>
+    <div class="cards-container">
+      <vt-car-card *ngFor="let car of cars" [car]="car"/>
+    </div>
+  `,
   styleUrl: './all-cars.component.scss'
 })
 export class AllCarsComponent implements OnInit {
