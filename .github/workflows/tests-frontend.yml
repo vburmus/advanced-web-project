@@ -24,4 +24,4 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Run tests
-        run: ng test --browsers ChromeHeadless
+        run: npm run test:ci
