@@ -1,0 +1,26 @@
+<div class="container">
+    <div class="map-container">
+        <google-map
+                height="100%"
+                width="100%"
+                [center]="center"
+                [zoom]="zoom"
+                [options]="mapOptions"
+                (mapClick)="clickedMarkerTitle = null"
+        >
+
+            <map-marker *ngFor="let marker of getMarkers()"
+                        [position]="marker.position"
+                        [title]="marker.title"
+                        [icon]="carIcon"
+                        (mapClick)="markerClicked(marker.title)"/>
+        </google-map>
+        <div *ngIf="clickedMarkerTitle" class="marker-info">
+            <h1>{{ clickedMarkerTitle }}</h1>
+        </div>
+    </div>
+</div>
+
+
+
+

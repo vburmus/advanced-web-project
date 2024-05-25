@@ -1,0 +1,16 @@
+.container {
+    display: flex;
+    height: 70%;
+    width: 100%;
+    justify-content: center;
+}
+
+.map-container {
+    width: 60%;
+}
+
+.marker-info {
+    padding: 10px;
+    text-align: center;
+    color: blueviolet;
+}
