@@ -8,7 +8,7 @@ on:
       - main
       - dev
 jobs:
-  test:
+  test-backend:
     runs-on: ubuntu-latest
     defaults:
       run:
