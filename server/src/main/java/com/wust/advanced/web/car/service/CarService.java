@@ -16,6 +16,7 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.exact;
 
@@ -54,19 +55,28 @@ public class CarService {
                                                .withMatcher("countryCode", exact());
         return carRepository.exists(Example.of(car, matcher));
     }
+
     public LocationDto updateLocation(LocationDto locationDTO, Long id) {
         Location location = entityToDtoMapper.locationDTOToLocation(locationDTO);
         Car car = readCarById(id);
         location.setCar(car);
         return locationService.create(location);
     }
-    private Car readCarById(Long id) {
-        return carRepository.findById(id).orElseThrow(() -> new ItemNotFoundException(String.format(CAR_WITH_ID_NOT_FOUND, id)));
-    }
 
     public CarDto assignDriver(Long id, Long driverId) {
         Car car = readCarById(id);
         car.setDriver(driverService.getById(driverId));
         return entityToDtoMapper.carToCarDTO(carRepository.save(car));
+    }
+
+    @Transactional
+    public void deleteLocations(Long id) {
+        Car car = readCarById(id);
+        locationService.deleteAllByCarId(car.getId());
+    }
+
+    private Car readCarById(Long id) {
+        return carRepository.findById(id)
+                            .orElseThrow(() -> new ItemNotFoundException(String.format(CAR_WITH_ID_NOT_FOUND, id)));
     }
 }

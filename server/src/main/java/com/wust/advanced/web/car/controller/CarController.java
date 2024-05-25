@@ -46,6 +46,13 @@ public class CarController {
                                                       @PathVariable Long id) {
         return ResponseEntity.ok(carService.updateLocation(locationDTO, id));
     }
+
+    @DeleteMapping("/{id}/location")
+    public ResponseEntity<Void> deleteLocations(@PathVariable Long id) {
+        carService.deleteLocations(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping(path = "/{id}/locations", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ServerSentEvent<Page<LocationDto>>> locationStream(@PathVariable Long id,
                                                                    @PageableDefault Pageable pageable) {
