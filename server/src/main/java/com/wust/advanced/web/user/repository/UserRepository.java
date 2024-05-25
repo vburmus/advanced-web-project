@@ -10,4 +10,5 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<FMUser,Long> {
     Optional<FMUser> findByCredentials(Credentials credentials);
+    Optional<FMUser> findByCredentials_Email(String email);
 }
