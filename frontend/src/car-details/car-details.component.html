@@ -1,0 +1,36 @@
+<div class="container">
+    <div class="map-container">
+        <google-map
+                height="100%"
+                width="100%"
+                [center]="center"
+                [zoom]="zoom"
+                [options]="mapOptions"
+        >
+            <map-marker
+                    [position]="getCarLastLocation()"
+                    [icon]="carIcon"
+            >
+            </map-marker>
+        </google-map>
+    </div>
+</div>
+
+<div class="info-container">
+    <div class="card-container" *ngIf="car.driver">
+        <h2>Driver (id: {{car.driver.id}})</h2>
+        <p>Name: {{car.driver.user.name}}</p>
+        <p>Surname: {{car.driver.user.surname}}</p>
+        <p>Driving License number: {{car.driver.drivingLicenseNumber}}</p>
+        <p>Driving License Country Code: {{car.driver.drivingLicenseCountryCode}}</p>
+        <p>Date of Birth: {{car.driver.dateOfBirth}}</p>
+    </div>
+
+    <div class="card-container">
+        <h2>Car (id: {{car.id}})</h2>
+        <p>VIN: {{car.vin}}</p>
+        <p>Plate Number: {{car.plateNumber}}</p>
+        <p>Country Code: {{car.countryCode}}</p>
+    </div>
+</div>
+
