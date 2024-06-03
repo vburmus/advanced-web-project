@@ -8,8 +8,7 @@ import {CarDetailsComponent} from "../car-details/car-details.component";
   selector: 'vt-root',
   standalone: true,
     imports: [RouterOutlet, AllCarsComponent, VtNavbarComponent, CarDetailsComponent],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  templateUrl: './app.component.html'
 })
 export class AppComponent {
 }
