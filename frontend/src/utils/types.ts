@@ -9,11 +9,16 @@ export interface Car {
 
 export interface Driver {
     id: number;
-    name: string;
-    surname: string;
     drivingLicenseNumber: string;
     drivingLicenseCountryCode: string;
     dateOfBirth: string;
+    user: FMUser;
+}
+
+export interface FMUser {
+    id: number;
+    name: string;
+    surname: string;
 }
 
 export interface Location {
