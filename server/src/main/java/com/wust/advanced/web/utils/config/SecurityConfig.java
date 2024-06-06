@@ -31,9 +31,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(
                         request -> request
-                                .requestMatchers("/api/v1/cars/**").permitAll()
+                                .requestMatchers("/api/v1/cars/**").authenticated()
                                 .requestMatchers("/api/v1/**").authenticated()
                                 .anyRequest().permitAll())
                 .authenticationProvider(authenticationProvider())
