@@ -1,11 +1,8 @@
 <header class="vt-header">
-    <img src="favicon.ico" width="80" alt="logo">
+    <img src="favicon.ico"  (click)="logoClicked()" [ngStyle]="{'cursor': 'pointer'}" width="80" alt="logo">
     <h1>Fleet Management</h1>
-    <div class="container">Hi and welcome!</div>
-    <h1>{{user}}</h1>
-
-    <div class="container">
-        <button (click)="logOut()">Logout from Google</button>
+    <div class="user-container">
+        <h3 class="">{{user}}</h3>
+        <button (click)="logOut()">Logout</button>
     </div>
-
 </header>

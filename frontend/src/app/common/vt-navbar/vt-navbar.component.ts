@@ -25,6 +25,6 @@ export class VtNavbarComponent {
     }
 
     logoClicked() {
-        this.router.navigate(['/all-cars']);
+        this.router.navigate(['']);
     }
 }
