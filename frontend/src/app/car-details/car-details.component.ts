@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {GoogleMap, MapMarker} from "@angular/google-maps";
 import {NgForOf, NgIf} from "@angular/common";
-import {Car} from "../utils/types";
 import {ActivatedRoute, Router} from "@angular/router";
-import {CarService} from "../app/common/car-service/CarService";
+import {Car} from "../../utils/types";
+import {CarService} from "../common/car-service/car.service";
 
 @Component({
     selector: 'vt-car-details',
@@ -43,7 +43,7 @@ export class CarDetailsComponent implements OnInit {
             const carId = params.get('id');
             this.carService.getCarById(carId!).subscribe(car => {
                 this.car = car;
-                this.center = {lat: car.locations[0].latitude, lng: car.locations[0].longitude};
+                this.center = this.getCarLastLocation();
             });
         });
     }
