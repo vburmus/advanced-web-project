@@ -1,8 +1,6 @@
 package com.wust.advanced.web.utils.config;
 
-import com.wust.advanced.web.auth.JwtToUserConverter;
 import com.wust.advanced.web.auth.credentials.service.CredentialsService;
-import com.wust.advanced.web.auth.oauth.CustomOidcUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +11,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -25,8 +25,6 @@ import java.util.List;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final CustomOidcUserService customOidcUserService;
-    private final JwtToUserConverter jwtToUserConverter;
     private final CredentialsService credentialsService;
 
     @Bean
@@ -39,16 +37,14 @@ public class SecurityConfig {
                                 .requestMatchers("/api/v1/**").authenticated()
                                 .anyRequest().permitAll())
                 .authenticationProvider(authenticationProvider())
-                .oauth2Login(login -> login
-                        .userInfoEndpoint(info -> info.oidcUserService(customOidcUserService)))
-                .oauth2ResourceServer(server -> server.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtToUserConverter)))
-                .logout(logout -> logout
-                        .logoutSuccessUrl("/logout")
-                        .deleteCookies("JSESSIONID")
-                        .invalidateHttpSession(true)
-                        .permitAll());
+                .oauth2ResourceServer(server -> server.jwt(jwt -> jwt.decoder(jwtDecoder())));
         return http.build();
 
+    }
+
+    @Bean
+    public JwtDecoder jwtDecoder() {
+        return NimbusJwtDecoder.withJwkSetUri("https://www.googleapis.com/oauth2/v3/certs").build();
     }
 
     @Bean
