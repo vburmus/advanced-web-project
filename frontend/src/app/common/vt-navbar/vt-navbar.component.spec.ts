@@ -40,6 +40,6 @@ describe('VtNavbarComponent', () => {
         const logo = fixture.debugElement.query(By.css('img'));
         logo.triggerEventHandler('click', null);
 
-        expect(routerSpy.navigate).toHaveBeenCalledWith(['/all-cars']);
+        expect(routerSpy.navigate).toHaveBeenCalledWith(['']);
     });
 });
