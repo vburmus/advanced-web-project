@@ -1,2 +1,4 @@
-<vt-navbar/>
+<vt-navbar
+        [user]="userName"
+        (logOutEmitter)="logout()"/>
 <router-outlet></router-outlet>

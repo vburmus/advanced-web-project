@@ -5,3 +5,4 @@
 **/.angular
 *.css
 *.css.map
+environment.ts

@@ -16,7 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,11 +48,13 @@ public class DriverService {
     public DriverDto create(DriverDto driverDto) {
         Driver driver = entityToDtoMapper.driverDtoToDriver(driverDto);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !(authentication.getPrincipal() instanceof DefaultOidcUser oidcUser)) {
+        if (authentication == null || !(authentication.getPrincipal() instanceof Jwt token)) {
             throw new AuthenticationCredentialsNotFoundException("Expected authentication principal is not present");
         }
-        String email = oidcUser.getEmail();
-        FMUser user = userService.getByEmail(email);
+        FMUser user = FMUser.builder()
+                .name(token.getClaimAsString("given_name"))
+                .surname(token.getClaimAsString("family_name")).build();
+        userService.create(user);
         driver.setUser(user);
         if (isDriverExists(driver)) {
             throw new ItemExistsException(String.format(DRIVER_ALREADY_EXISTS,
@@ -67,7 +69,6 @@ public class DriverService {
                                                .withMatcher("drivingLicenseNumber", exact())
                                                .withMatcher("drivingLicenseCountryCode", exact())
                                                .withMatcher("dateOfBirth", exact());
-        return driverRepository.exists(Example.of(driver, matcher)) || driverRepository.existsByUser_Id(driver.getUser()
-                                                                                                              .getId());
+        return driverRepository.exists(Example.of(driver, matcher));
     }
 }

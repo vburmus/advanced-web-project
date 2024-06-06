@@ -33,6 +33,10 @@ public class UserService {
 
         return userRepository.save(newUser);
     }
+    public FMUser create(FMUser user) {
+        return userRepository.save(user);
+    }
+
     public FMUser getByEmail(String email) {
         return userRepository.findByCredentials_Email(email).orElseThrow(() -> new ItemNotFoundException("User with email " + email + " " +
                 "not found"));
