@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {GoogleMap, MapMarker} from '@angular/google-maps';
 import {Car, Location} from "../../../utils/types";
 import {NgForOf, NgIf} from "@angular/common";
@@ -15,11 +15,11 @@ import {NgForOf, NgIf} from "@angular/common";
     templateUrl: './vt-map-all-cars.component.html',
     styleUrl: './vt-map-all-cars.component.scss'
 })
-export class VtMapAllCarsComponent {
+export class VtMapAllCarsComponent implements OnInit {
     @Input() cars!: Car[];
 
     clickedMarkerTitle: string | null = null;
-    center: google.maps.LatLngLiteral = {lat: 51.110754, lng: 17.058006};
+    center!: google.maps.LatLngLiteral;
     zoom = 15;
 
     mapOptions: google.maps.MapOptions = {
@@ -27,7 +27,7 @@ export class VtMapAllCarsComponent {
         scrollwheel: false,
         disableDoubleClickZoom: true,
         maxZoom: 18,
-        minZoom: 13,
+        minZoom: 5,
         streetViewControl: false,
         mapTypeControl: false
     };
@@ -35,6 +35,10 @@ export class VtMapAllCarsComponent {
     carIcon = {
         url: 'assets/car-icon.png'
     };
+
+    ngOnInit(): void {
+        this.center = {lat: this.cars[0].locations[this.cars[0].locations.length - 1].latitude, lng: this.cars[0].locations[this.cars[0].locations.length - 1].longitude};
+    }
 
     getMarkers(): { position: google.maps.LatLngLiteral, title: string }[] {
         return this.cars.map(car => {

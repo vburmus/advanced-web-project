@@ -43,7 +43,7 @@ export class CarDetailsComponent implements OnInit {
             const carId = params.get('id');
             this.carService.getCarById(carId!).subscribe(car => {
                 this.car = car;
-                this.center = this.getCarLastLocation();
+                this.center = {lat: car.locations[this.car.locations.length - 1].latitude, lng: car.locations[this.car.locations.length - 1].longitude};
             });
         });
     }
