@@ -1,4 +1,4 @@
-import {map, Observable, of} from "rxjs";
+import {map, Observable} from "rxjs";
 import {Car} from "../../../utils/types";
 import {Injectable} from "@angular/core";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
