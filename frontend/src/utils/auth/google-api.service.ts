@@ -20,26 +20,47 @@ export class GoogleApiService {
     userProfileSubject = new Subject<UserInfo>();
 
     constructor(private readonly oAuthService: OAuthService) {
-        oAuthService.configure(authCodeFlowConfig);
-        oAuthService.logoutUrl = "https://www.google.com/accounts/Logout";
-        oAuthService.loadDiscoveryDocument().then(() => {
-            oAuthService.tryLoginImplicitFlow().then(() => {
-                if (!oAuthService.hasValidAccessToken()) {
-                    oAuthService.initLoginFlow()
+        this.oAuthService.configure(authCodeFlowConfig);
+        this.oAuthService.logoutUrl = "https://www.google.com/accounts/Logout";
+
+        this.oAuthService.loadDiscoveryDocument().then(() => {
+            this.oAuthService.tryLoginImplicitFlow().then(() => {
+                if (this.oAuthService.hasValidAccessToken()) {
+                    this.oAuthService.loadUserProfile().then((userProfile) => {
+                        this.userProfileSubject.next(userProfile as UserInfo);
+                    });
+                }
+            })
+        });
+    }
+
+    signIn() {
+        this.oAuthService.loadDiscoveryDocument().then(() => {
+            this.oAuthService.tryLoginImplicitFlow().then(() => {
+                if (!this.oAuthService.hasValidAccessToken()) {
+                    this.oAuthService.initLoginFlow();
                 } else {
-                    oAuthService.loadUserProfile().then((userProfile) => {
-                        this.userProfileSubject.next(userProfile as UserInfo)
-                    })
+                    this.oAuthService.loadUserProfile().then((userProfile) => {
+                        this.userProfileSubject.next(userProfile as UserInfo);
+                    });
                 }
             })
         });
     }
 
     isLoggedIn(): boolean {
-        return this.oAuthService.hasValidAccessToken()
+        return this.oAuthService.hasValidAccessToken();
     }
 
     signOut() {
-        this.oAuthService.logOut()
+        this.oAuthService.logOut();
+    }
+
+    getUserName(): string | undefined {
+        if(this.oAuthService.getIdentityClaims()) {
+            return this.oAuthService.getIdentityClaims()['name'];
+
+        }
+        return undefined;
     }
 }

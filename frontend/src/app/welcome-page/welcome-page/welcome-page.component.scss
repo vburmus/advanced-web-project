@@ -1,0 +1,61 @@
+.container {
+  display: flex;
+  justify-content: space-around;
+  padding: 20px;
+}
+
+.content {
+  max-width: 50%;
+  padding: 20px;
+}
+
+.signup {
+  max-width: 30%;
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.signup-header {
+  text-align: center;
+}
+
+.signup-header h2 {
+  margin-top: 0;
+}
+
+.signup-header hr {
+  border: none;
+  border-top: 1px solid #ccc;
+  margin: 10px 0;
+}
+
+.signup-header h3 {
+  margin-bottom: 20px;
+}
+
+.google-signup {
+  width: 100%;
+  padding: 10px;
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.google-signup:hover {
+  background-color: #357ae8;
+}
+
+.img-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+
+  img {
+    border-radius: 10px;
+  }
+}
