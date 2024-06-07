@@ -1,4 +1,10 @@
-<vt-navbar
-        [user]="userName"
-        (logOutEmitter)="logout()"/>
-<router-outlet></router-outlet>
+<ng-template [ngIf]="!isLoggedIn">
+    <vt-navbar/>
+    <vt-welcome-page (usernameEmitted)="logInHandler($event)"/>
+</ng-template>
+<ng-template [ngIf]="isLoggedIn">
+    <vt-navbar
+            [userObservable]="userObservable"
+            (logOutEmitter)="logout()"/>
+    <router-outlet></router-outlet>
+</ng-template>
