@@ -8,7 +8,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
 import java.time.Duration;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/cars")
@@ -54,22 +54,25 @@ public class CarController {
     }
 
     @GetMapping(path = "/{id}/locations", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ServerSentEvent<Page<LocationDto>>> locationStream(@PathVariable Long id,
-                                                                   @PageableDefault Pageable pageable) {
-        Page<LocationDto> initialPage = locationService.readAllByCarId(id, pageable);
+    public Flux<ServerSentEvent<List<LocationDto>>> locationStream(@PathVariable Long id) {
+        List<LocationDto> initialList = locationService.readAllByCarId(id);
 
-        Flux<ServerSentEvent<Page<LocationDto>>> initialData = Flux.just(ServerSentEvent.<Page<LocationDto>>builder()
-                                                                                        .data(initialPage)
-                                                                                        .build());
-        Flux<ServerSentEvent<Page<LocationDto>>> periodicUpdates = Flux.interval(Duration.ofSeconds(5))
-                                                                       .flatMap(sequence -> {
-                                                                           Page<LocationDto> updatedPage =
-                                                                                   locationService.readAllByCarId(id, pageable);
-                                                                           return Flux.just(ServerSentEvent.<Page<LocationDto>>builder()
-                                                                                                           .id(String.valueOf(sequence))
-                                                                                                           .data(updatedPage)
-                                                                                                           .build());
-                                                                       });
+        Flux<ServerSentEvent<List<LocationDto>>> initialData = Flux.just(
+                ServerSentEvent.<List<LocationDto>>builder()
+                        .data(initialList)
+                        .build()
+        );
+
+        Flux<ServerSentEvent<List<LocationDto>>> periodicUpdates = Flux.interval(Duration.ofSeconds(5))
+                .flatMap(sequence -> {
+                    List<LocationDto> updatedList = locationService.readAllByCarId(id);
+                    return Flux.just(
+                            ServerSentEvent.<List<LocationDto>>builder()
+                                    .id(String.valueOf(sequence))
+                                    .data(updatedList)
+                                    .build()
+                    );
+                });
 
         return Flux.concat(initialData, periodicUpdates);
     }

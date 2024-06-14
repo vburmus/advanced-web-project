@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(
                         request -> request
-                                .requestMatchers("/api/v1/cars/**").authenticated()
+                                .requestMatchers("/api/v1/cars/{id}/locations","/api/v1/cars/{id}/location").permitAll()
                                 .requestMatchers("/api/v1/**").authenticated()
                                 .anyRequest().permitAll())
                 .authenticationProvider(authenticationProvider())

@@ -5,9 +5,9 @@ import com.wust.advanced.web.location.repository.LocationRepository;
 import com.wust.advanced.web.utils.EntityToDtoMapper;
 import com.wust.advanced.web.utils.dto.LocationDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -19,8 +19,8 @@ public class LocationService {
         return entityToDtoMapper.locationToLocationDTO(locationRepository.save(location));
     }
 
-    public Page<LocationDto> readAllByCarId(Long carId, Pageable pageable) {
-        return locationRepository.findAllByCar_Id(carId, pageable).map(entityToDtoMapper::locationToLocationDTO);
+    public List<LocationDto> readAllByCarId(Long carId) {
+        return locationRepository.findAllByCar_Id(carId).stream().map(entityToDtoMapper::locationToLocationDTO).toList();
     }
 
     public void deleteAllByCarId(Long carId) {

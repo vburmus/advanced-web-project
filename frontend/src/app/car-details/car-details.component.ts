@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {GoogleMap, MapMarker} from "@angular/google-maps";
 import {NgForOf, NgIf} from "@angular/common";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -17,9 +17,12 @@ import {CarService} from "../common/car-service/car.service";
     templateUrl: './car-details.component.html',
     styleUrl: './car-details.component.scss'
 })
-export class CarDetailsComponent implements OnInit {
+export class CarDetailsComponent implements OnInit, OnDestroy {
     car!: Car;
     center!: google.maps.LatLngLiteral;
+
+    location!: { latitude: number, longitude: number };
+    private carLocationSubscription: any;
 
     mapOptions: google.maps.MapOptions = {
         zoomControl: true,
@@ -36,6 +39,7 @@ export class CarDetailsComponent implements OnInit {
     };
 
     constructor(private route: ActivatedRoute, private router: Router, private carService: CarService) {
+
     }
 
     ngOnInit() {
@@ -44,12 +48,27 @@ export class CarDetailsComponent implements OnInit {
             this.carService.getCarById(carId!).subscribe(car => {
                 this.car = car;
                 this.center = {lat: car.locations[this.car.locations.length - 1].latitude, lng: car.locations[this.car.locations.length - 1].longitude};
+                const lastLocation = this.car.locations[this.car.locations.length - 1];
+                this.location = {latitude: lastLocation.latitude, longitude: lastLocation.longitude};
             });
+            this.carLocationSubscription = this.carService.getCarLocation(carId!).subscribe(
+                location => {
+                    this.location = location;
+                },
+                error => {
+                    console.error('Error:', error);
+                }
+            );
         });
     }
 
+    ngOnDestroy() {
+        if (this.carLocationSubscription) {
+            this.carLocationSubscription.unsubscribe();
+        }
+    }
+
     getCarLastLocation(): google.maps.LatLngLiteral {
-        const lastLocation = this.car.locations[this.car.locations.length - 1];
-        return {lat: lastLocation.latitude, lng: lastLocation.longitude};
+        return {lat: this.location.latitude, lng: this.location.longitude};
     }
 }
